@@ -1,3 +1,4 @@
+import LogoutButton from "@/app/(auth)/LogoutButton";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
@@ -8,7 +9,7 @@ export default async function Page() {
         <Button>
           <Link href={""}>Home</Link>
         </Button>
-        <Button>Logout</Button>
+        <LogoutButton />
       </div>
     </main>
   );

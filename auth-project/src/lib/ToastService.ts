@@ -1,3 +1,4 @@
+import { AxiosError } from "axios";
 import { toast } from "sonner";
 
 class ToastService {
@@ -30,5 +31,13 @@ class ToastService {
     toast.dismiss(toastId);
   }
 }
+
+export const toastError = (error: unknown) => {
+  if (error instanceof AxiosError) {
+    Toast.error(error.response?.data.message);
+  } else {
+    Toast.error(String(error));
+  }
+};
 
 export const Toast = new ToastService();

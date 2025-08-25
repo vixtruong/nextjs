@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuth } from "@/hooks/useAuth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -14,13 +15,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
-import { RegisterData, registerUser } from "@/services/authService";
-import { Toast } from "@/lib/ToastService";
 import Link from "next/link";
+import { RegisterData } from "@/services/authService";
 
 export function RegisterForm() {
-  const [loading, setLoading] = useState(false);
+  const { register, loading } = useAuth();
 
   const formSchema = z.object({
     fullName: z.string().min(2, "Full name is required."),
@@ -49,18 +48,9 @@ export function RegisterForm() {
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    setLoading(true);
-    const toastId = Toast.loading("Processing...");
-    const result = await registerUser(values as RegisterData);
+    await register(values as RegisterData);
 
-    if (result !== null) {
-      console.log("Success: ", result);
-      Toast.success("Create account successfully.");
-      form.reset();
-    }
-
-    setLoading(false);
-    Toast.dismiss(toastId);
+    form.reset();
   };
 
   return (

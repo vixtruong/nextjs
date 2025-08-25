@@ -1,5 +1,5 @@
-import { Toast } from "@/lib/ToastService";
-import axios, { AxiosError } from "axios";
+import axiosInstance from "@/lib/axios";
+import { toastError } from "@/lib/ToastService";
 
 export interface LoginData {
   username: string;
@@ -19,16 +19,18 @@ const authAPI = "api/auth";
 
 export async function login(data: LoginData) {
   try {
-    const res = await axios.post(`${API_BASE_URl}/${authAPI}/login`, data);
-    console.log(res);
+    await axiosInstance.post(`${API_BASE_URl}/${authAPI}/login`, data);
   } catch (error) {
     toastError(error);
   }
 }
 
-export async function registerUser(data: RegisterData) {
+export async function register(data: RegisterData) {
   try {
-    const res = await axios.post(`${API_BASE_URl}/${authAPI}/register`, data);
+    const res = await axiosInstance.post(
+      `${API_BASE_URl}/${authAPI}/register`,
+      data
+    );
 
     return res;
   } catch (error) {
@@ -36,10 +38,18 @@ export async function registerUser(data: RegisterData) {
   }
 }
 
-const toastError = (error: unknown) => {
-  if (error instanceof AxiosError) {
-    Toast.error(error.response?.data.message);
-  } else {
-    Toast.error(String(error));
+export async function logout() {
+  try {
+    await axiosInstance.post(`${API_BASE_URl}/${authAPI}/logout`, {});
+  } catch (error) {
+    toastError(error);
   }
-};
+}
+
+export async function refreshToken() {
+  try {
+    await axiosInstance.post(`${API_BASE_URl}/${authAPI}/refresh`, {});
+  } catch (error) {
+    toastError(error);
+  }
+}

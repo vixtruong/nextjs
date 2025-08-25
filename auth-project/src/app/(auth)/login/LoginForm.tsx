@@ -15,8 +15,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { Toast } from "@/lib/ToastService";
-import { login, LoginData } from "@/services/authService";
+import { useAuth } from "@/hooks/useAuth";
+import { LoginData } from "@/services/authService";
 
 const formSchema = z.object({
   username: z.string().min(2, {
@@ -33,6 +33,8 @@ const formSchema = z.object({
 });
 
 export function LoginForm() {
+  const { login } = useAuth();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -42,13 +44,7 @@ export function LoginForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const toastId = Toast.loading("Processing...");
-    const result = await login(values as LoginData);
-
-    if (result !== null) {
-      console.log(result);
-    }
-    Toast.dismiss(toastId);
+    await login(values as LoginData);
   }
 
   return (
