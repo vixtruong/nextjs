@@ -24,9 +24,10 @@ export function RegisterForm() {
   const formSchema = z.object({
     fullName: z.string().min(2, "Full name is required."),
     birthday: z.string().nonempty("Birthday is required."),
-    username: z.string().min(2, {
-      message: "Username must be at least 2 characters.",
-    }),
+    email: z
+      .string()
+      .nonempty("Email is required.")
+      .email("Invalid email address."),
     password: z
       .string()
       .min(8, {
@@ -42,7 +43,7 @@ export function RegisterForm() {
     defaultValues: {
       fullName: "",
       birthday: "",
-      username: "",
+      email: "",
       password: "",
     },
   });
@@ -76,7 +77,7 @@ export function RegisterForm() {
             <FormItem>
               <FormLabel>Birthday</FormLabel>
               <FormControl>
-                <Input type="date" placeholder="Birhday" {...field} />
+                <Input type="date"  placeholder="Birhday" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -84,12 +85,12 @@ export function RegisterForm() {
         />
         <FormField
           control={form.control}
-          name="username"
+          name="email"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input placeholder="Username" {...field} />
+                <Input placeholder="Email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

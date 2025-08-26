@@ -2,8 +2,8 @@ import { Toast } from "@/lib/ToastService";
 import {
   login as apiLogin,
   LoginData,
-  logout,
-  register,
+  logout as apiLogout,
+  register as apiRegister,
   RegisterData,
 } from "@/services/authService";
 import { useCallback, useEffect, useState } from "react";
@@ -47,9 +47,9 @@ export function useAuth() {
   const handleRegister = async (data: RegisterData) => {
     setLoading(true);
     const toastId = Toast.loading("Processing...");
-    const result = await register(data);
+    const result = await apiRegister(data);
 
-    if (result !== null) {
+    if (result !== null && result !== undefined) {
       console.log("Success: ", result);
       Toast.success("Create account successfully.");
     }
@@ -62,7 +62,7 @@ export function useAuth() {
   const handleLogout = async () => {
     setLoading(true);
     const toastId = Toast.loading("Processing...");
-    await logout();
+    await apiLogout();
 
     setLoading(false);
     Toast.dismiss(toastId);

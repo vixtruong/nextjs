@@ -1,13 +1,15 @@
+"use client";
 import axiosInstance from "@/lib/axios";
 import { toastError } from "@/lib/ToastService";
+import { signIn } from "@/auth";
 
 export interface LoginData {
-  username: string;
+  email: string;
   password: string;
 }
 
 export interface RegisterData {
-  username: string;
+  email: string;
   password: string;
   fullName: string;
   birthday: string;
@@ -48,8 +50,17 @@ export async function logout() {
 
 export async function refreshToken() {
   try {
-    await axiosInstance.post(`${API_BASE_URl}/${authAPI}/refresh`, {});
+    await axiosInstance.post(
+      `${API_BASE_URl}/${authAPI}/refresh`,
+      {},
+      { withCredentials: true }
+    );
   } catch (error) {
     toastError(error);
   }
 }
+
+//OAuth2
+export const githubLogin = async () => {
+  await signIn("github", { redirectTo: "/" });
+};

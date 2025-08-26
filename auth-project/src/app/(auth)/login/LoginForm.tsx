@@ -19,9 +19,10 @@ import { useAuth } from "@/hooks/useAuth";
 import { LoginData } from "@/services/authService";
 
 const formSchema = z.object({
-  username: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
-  }),
+  email: z
+    .string()
+    .nonempty("Email is required.")
+    .email("Invalid email address."),
   password: z
     .string()
     .min(6, {
@@ -38,7 +39,7 @@ export function LoginForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   });
@@ -52,12 +53,12 @@ export function LoginForm() {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
-          name="username"
+          name="email"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Username</FormLabel>
               <FormControl>
-                <Input placeholder="Username" {...field} />
+                <Input placeholder="Email" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
