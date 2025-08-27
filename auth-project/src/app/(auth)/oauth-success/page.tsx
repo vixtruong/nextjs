@@ -13,7 +13,6 @@ export default function OAuthSuccessPage() {
       const email = searchParams.get("email") || "";
       const fullName = searchParams.get("fullName") || "";
       const provider = searchParams.get("provider") || "";
-      const providerAccountId = searchParams.get("providerAccountId") || "";
 
       if (email && fullName) {
         try {
@@ -26,13 +25,11 @@ export default function OAuthSuccessPage() {
                 email,
                 fullName,
                 provider,
-                providerAccountId,
               }),
+              credentials: "include",
             }
           );
-
-          if (!res.ok) throw new Error("Login failed");
-
+          console.log(res);
           router.push("/");
         } catch (error) {
           toastError(error || "Login failed");
@@ -47,9 +44,8 @@ export default function OAuthSuccessPage() {
 
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500">
-        Sign In...
-      </div>
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div>Sign In...</div>
     </div>
   );
 }

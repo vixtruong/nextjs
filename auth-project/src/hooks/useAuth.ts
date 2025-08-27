@@ -1,4 +1,5 @@
 "use client";
+import { OAuthProvider } from "@/constants/OAuthProvider";
 import { Toast, toastError } from "@/lib/ToastService";
 import {
   login as apiLogin,
@@ -42,7 +43,7 @@ export function useAuth() {
     try {
       await apiLogin(data);
 
-      loadUser();
+      // loadUser();
       window.location.href = "/";
     } catch (error) {
       toastError(error);
@@ -53,18 +54,7 @@ export function useAuth() {
   };
 
   const handleGithubLogin = async () => {
-    setLoading(true);
-    const toastId = Toast.loading("Processing...");
-    try {
-      await apiSignInOAuth("github");
-      loadUser();
-    } catch (error) {
-      console.log(error);
-      toastError(error);
-    } finally {
-      setLoading(false);
-      Toast.dismiss(toastId);
-    }
+    await apiSignInOAuth(OAuthProvider.GITHUB);
   };
 
   const handleRegister = async (data: RegisterData) => {

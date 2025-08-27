@@ -18,16 +18,20 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // Kiểm tra lỗi 401 và chưa retry
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url.includes("/api/auth/login")
+    ) {
       originalRequest._retry = true;
 
       try {
         await refreshToken();
-
         return axiosInstance(originalRequest);
-      } catch (error) {
-        console.error("Refresh token failed", error);
-        return Promise.reject(error);
+      } catch (refreshError) {
+        console.error("Refresh token failed", refreshError);
+        return Promise.reject(refreshError);
       }
     }
 

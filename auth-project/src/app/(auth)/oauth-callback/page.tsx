@@ -12,16 +12,15 @@ export default async function OAuthCallbackPage({ searchParams }: Props) {
 
   const session = await auth();
 
-  if (session?.user?.email && session?.user?.name) {
-    const query = new URLSearchParams({
-      email: session.user.email,
-      fullName: session.user.name,
-      provider: provider!,
-      providerAccountId: session.user!.id!,
-    });
-
-    redirect(`/oauth-success?${query.toString()}`);
+  if (!session) {
+    redirect("/login");
   }
 
-  redirect("/");
+  const query = new URLSearchParams({
+    email: session.user!.email!,
+    fullName: session.user!.name!,
+    provider: provider!,
+  });
+
+  redirect(`/oauth-success?${query.toString()}`);
 }
