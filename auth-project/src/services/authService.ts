@@ -1,7 +1,4 @@
-"use client";
 import axiosInstance from "@/lib/axios";
-import { toastError } from "@/lib/ToastService";
-import { signIn } from "@/auth";
 
 export interface LoginData {
   email: string;
@@ -15,52 +12,45 @@ export interface RegisterData {
   birthday: string;
 }
 
+export interface OAuthLoginData {
+  email: string;
+  fullName?: string;
+  provider: string;
+  providerAccountId: string | number;
+}
+
 const API_BASE_URl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const authAPI = "api/auth";
 
 export async function login(data: LoginData) {
-  try {
-    await axiosInstance.post(`${API_BASE_URl}/${authAPI}/login`, data);
-  } catch (error) {
-    toastError(error);
-  }
+  await axiosInstance.post(`${API_BASE_URl}/${authAPI}/login`, data);
+}
+
+export async function OAuth2Login(data: OAuthLoginData) {
+  await axiosInstance.post(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/third-party/login`,
+    data
+  );
 }
 
 export async function register(data: RegisterData) {
-  try {
-    const res = await axiosInstance.post(
-      `${API_BASE_URl}/${authAPI}/register`,
-      data
-    );
+  const res = await axiosInstance.post(
+    `${API_BASE_URl}/${authAPI}/register`,
+    data
+  );
 
-    return res;
-  } catch (error) {
-    toastError(error);
-  }
+  return res;
 }
 
 export async function logout() {
-  try {
-    await axiosInstance.post(`${API_BASE_URl}/${authAPI}/logout`, {});
-  } catch (error) {
-    toastError(error);
-  }
+  await axiosInstance.post(`${API_BASE_URl}/${authAPI}/logout`, {});
 }
 
 export async function refreshToken() {
-  try {
-    await axiosInstance.post(
-      `${API_BASE_URl}/${authAPI}/refresh`,
-      {},
-      { withCredentials: true }
-    );
-  } catch (error) {
-    toastError(error);
-  }
+  await axiosInstance.post(
+    `${API_BASE_URl}/${authAPI}/refresh`,
+    {},
+    { withCredentials: true }
+  );
 }
-
-//OAuth2
-export const githubLogin = async () => {
-  await signIn("github", { redirectTo: "/" });
-};

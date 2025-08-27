@@ -35,6 +35,7 @@ class ToastService {
 export const toastError = (error: unknown) => {
   if (error instanceof AxiosError) {
     Toast.error(error.response?.data.message);
+    console.log(error.response);
   } else {
     Toast.error(String(error));
   }

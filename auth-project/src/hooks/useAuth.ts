@@ -1,4 +1,5 @@
-import { Toast } from "@/lib/ToastService";
+"use client";
+import { Toast, toastError } from "@/lib/ToastService";
 import {
   login as apiLogin,
   LoginData,
@@ -6,6 +7,7 @@ import {
   register as apiRegister,
   RegisterData,
 } from "@/services/authService";
+import { signInOAuth as apiSignInOAuth } from "@/services/OAuth2Service";
 import { useCallback, useEffect, useState } from "react";
 
 export function useAuth() {
@@ -13,16 +15,21 @@ export function useAuth() {
   const [loading, setLoading] = useState(false);
 
   const loadUser = useCallback(() => {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-
-      setUser({ userId: payload.sub });
-    } else {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("accessToken");
+      if (token) {
+        const payload = JSON.parse(atob(token.split(".")[1]));
+        setUser({ userId: payload.sub });
+      } else {
+        setUser(null);
+      }
+    } catch (error) {
+      console.error("Load user failed:", error);
       setUser(null);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   }, []);
 
   useEffect(() => {
@@ -32,47 +39,72 @@ export function useAuth() {
   const handleLogin = async (data: LoginData) => {
     setLoading(true);
     const toastId = Toast.loading("Processing...");
-    const result = await apiLogin(data);
+    try {
+      await apiLogin(data);
 
-    if (result !== null) {
-      console.log(result);
+      loadUser();
+      window.location.href = "/";
+    } catch (error) {
+      toastError(error);
+    } finally {
+      setLoading(false);
+      Toast.dismiss(toastId);
     }
+  };
 
-    setLoading(false);
-    Toast.dismiss(toastId);
-    loadUser();
-    window.location.href = "/";
+  const handleGithubLogin = async () => {
+    setLoading(true);
+    const toastId = Toast.loading("Processing...");
+    try {
+      await apiSignInOAuth("github");
+      loadUser();
+    } catch (error) {
+      console.log(error);
+      toastError(error);
+    } finally {
+      setLoading(false);
+      Toast.dismiss(toastId);
+    }
   };
 
   const handleRegister = async (data: RegisterData) => {
     setLoading(true);
     const toastId = Toast.loading("Processing...");
-    const result = await apiRegister(data);
-
-    if (result !== null && result !== undefined) {
-      console.log("Success: ", result);
-      Toast.success("Create account successfully.");
+    try {
+      const result = await apiRegister(data);
+      if (result) {
+        console.log("Register success:", result);
+        Toast.success("Create account successfully.");
+      }
+    } catch (error) {
+      console.log(error);
+      toastError(error);
+    } finally {
+      setLoading(false);
+      Toast.dismiss(toastId);
     }
-
-    setLoading(false);
-    Toast.dismiss(toastId);
-    // loadUser();
   };
 
   const handleLogout = async () => {
     setLoading(true);
     const toastId = Toast.loading("Processing...");
-    await apiLogout();
-
-    setLoading(false);
-    Toast.dismiss(toastId);
-    window.location.href = "/";
+    try {
+      await apiLogout();
+      window.location.href = "/";
+    } catch (error) {
+      console.log(error);
+      toastError(error);
+    } finally {
+      setLoading(false);
+      Toast.dismiss(toastId);
+    }
   };
 
   return {
     user,
     loading,
     login: handleLogin,
+    githubLogin: handleGithubLogin,
     register: handleRegister,
     logout: handleLogout,
   };
