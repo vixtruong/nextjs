@@ -54,3 +54,11 @@ export async function refreshToken() {
     { withCredentials: true }
   );
 }
+
+export async function getProfile() {
+  const res = await axiosInstance.get(`${API_BASE_URl}/api/users/profile`, {
+    withCredentials: true,
+  });
+
+  return res.data.data;
+}

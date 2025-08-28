@@ -3,7 +3,12 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function LogoutButton() {
-  const { logout } = useAuth();
+  const { logout, logoutOAuth } = useAuth();
 
-  return <Button onClick={logout}>Logout</Button>;
+  const submitLogout = async () => {
+    await logoutOAuth();
+    await logout();
+  };
+
+  return <Button onClick={submitLogout}>Logout</Button>;
 }

@@ -9,7 +9,9 @@ const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use(
-  (config) => config,
+  (config) => {
+    return config;
+  },
   (error) => Promise.reject(error)
 );
 
@@ -18,7 +20,6 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // Kiểm tra lỗi 401 và chưa retry
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
@@ -28,6 +29,7 @@ axiosInstance.interceptors.response.use(
 
       try {
         await refreshToken();
+
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         console.error("Refresh token failed", refreshError);

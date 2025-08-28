@@ -7,24 +7,31 @@ import {
   logout as apiLogout,
   register as apiRegister,
   RegisterData,
+  getProfile,
 } from "@/services/authService";
-import { signInOAuth as apiSignInOAuth } from "@/services/OAuth2Service";
+import {
+  signInOAuth as apiSignInOAuth,
+  signOutOAuth,
+} from "@/services/OAuth2Service";
 import { useCallback, useEffect, useState } from "react";
 
+export interface UserResponse {
+  id: number;
+  fullName: string;
+  email: string;
+  avatarUrl?: string;
+  createdTime: number;
+}
+
 export function useAuth() {
-  const [user, setUser] = useState<{ userId: number } | null>(null);
+  const [user, setUser] = useState<UserResponse | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const loadUser = useCallback(() => {
+  const loadUser = useCallback(async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("accessToken");
-      if (token) {
-        const payload = JSON.parse(atob(token.split(".")[1]));
-        setUser({ userId: payload.sub });
-      } else {
-        setUser(null);
-      }
+      const res = await getProfile();
+      setUser(res);
     } catch (error) {
       console.error("Load user failed:", error);
       setUser(null);
@@ -78,8 +85,10 @@ export function useAuth() {
   const handleLogout = async () => {
     setLoading(true);
     const toastId = Toast.loading("Processing...");
+
     try {
       await apiLogout();
+
       window.location.href = "/";
     } catch (error) {
       console.log(error);
@@ -90,6 +99,16 @@ export function useAuth() {
     }
   };
 
+  const handleLogoutOAuth = async () => {
+    try {
+      await signOutOAuth();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     user,
     loading,
@@ -97,5 +116,6 @@ export function useAuth() {
     githubLogin: handleGithubLogin,
     register: handleRegister,
     logout: handleLogout,
+    logoutOAuth: handleLogoutOAuth,
   };
 }

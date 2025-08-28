@@ -4,6 +4,7 @@ const publicRoutes = ["/login", "/register", "/abc"];
 
 export default function middleware(req: NextRequest) {
   const accessToken = req.cookies.get("accessToken")?.value || null;
+  const refreshToken = req.cookies.get("refreshToken")?.value || null;
 
   const { pathname } = req.nextUrl;
 
@@ -13,12 +14,12 @@ export default function middleware(req: NextRequest) {
 
   const isPublic = publicRoutes.some((route) => pathname.startsWith(route));
 
-  if (!isPublic && !accessToken) {
-    return NextResponse.redirect(new URL("/login", req.url));
+  if (isPublic && refreshToken) {
+    return NextResponse.redirect(new URL("/", req.url));
   }
 
-  if (isPublic && accessToken) {
-    return NextResponse.redirect(new URL("/", req.url));
+  if (!isPublic && !accessToken && !refreshToken) {
+    return NextResponse.redirect(new URL("/login", req.url));
   }
 
   return NextResponse.next();

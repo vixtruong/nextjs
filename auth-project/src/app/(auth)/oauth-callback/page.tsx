@@ -19,6 +19,7 @@ export default async function OAuthCallbackPage({ searchParams }: Props) {
   const query = new URLSearchParams({
     email: session.user!.email!,
     fullName: session.user!.name!,
+    avatarUrl: session.user?.image || "",
     provider: provider!,
   });
 
