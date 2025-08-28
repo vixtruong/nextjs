@@ -8,12 +8,15 @@ import {
   register as apiRegister,
   RegisterData,
   getProfile,
+  refreshToken,
 } from "@/services/authService";
 import {
   signInOAuth as apiSignInOAuth,
   signOutOAuth,
-} from "@/services/OAuth2Service";
+} from "@/services/oAuth2Service";
 import { useCallback, useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import { usePathname } from "next/navigation";
 
 export interface UserResponse {
   id: number;
@@ -27,18 +30,39 @@ export function useAuth() {
   const [user, setUser] = useState<UserResponse | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const pathname = usePathname();
+
   const loadUser = useCallback(async () => {
     setLoading(true);
+
+    const publicRoutes = ["/login", "/register", "/forgot-password"];
+
+    if (publicRoutes.includes(pathname)) {
+      return;
+    }
+
     try {
+      const token = Cookies.get("accessToken");
+
+      if (!token) {
+        try {
+          await refreshToken();
+        } catch (err) {
+          console.log(err);
+          setUser(null);
+          return;
+        }
+      }
+
       const res = await getProfile();
       setUser(res);
     } catch (error) {
-      console.error("Load user failed:", error);
       setUser(null);
+      console.error(error);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [pathname]);
 
   useEffect(() => {
     loadUser();

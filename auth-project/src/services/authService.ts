@@ -19,12 +19,10 @@ export interface OAuthLoginData {
   providerAccountId: string | number;
 }
 
-const API_BASE_URl = process.env.NEXT_PUBLIC_API_BASE_URL;
-
 const authAPI = "api/auth";
 
 export async function login(data: LoginData) {
-  await axiosInstance.post(`${API_BASE_URl}/${authAPI}/login`, data);
+  await axiosInstance.post(`${authAPI}/login`, data);
 }
 
 export async function OAuth2Login(data: OAuthLoginData) {
@@ -35,30 +33,21 @@ export async function OAuth2Login(data: OAuthLoginData) {
 }
 
 export async function register(data: RegisterData) {
-  const res = await axiosInstance.post(
-    `${API_BASE_URl}/${authAPI}/register`,
-    data
-  );
+  const res = await axiosInstance.post(`${authAPI}/register`, data);
 
   return res;
 }
 
 export async function logout() {
-  await axiosInstance.post(`${API_BASE_URl}/${authAPI}/logout`, {});
+  await axiosInstance.post(`${authAPI}/logout`, {});
 }
 
 export async function refreshToken() {
-  await axiosInstance.post(
-    `${API_BASE_URl}/${authAPI}/refresh`,
-    {},
-    { withCredentials: true }
-  );
+  await axiosInstance.post(`${authAPI}/refresh`, {});
 }
 
 export async function getProfile() {
-  const res = await axiosInstance.get(`${API_BASE_URl}/api/users/profile`, {
-    withCredentials: true,
-  });
+  const res = await axiosInstance.get(`api/users/me/profile`);
 
   return res.data.data;
 }
