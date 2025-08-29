@@ -21,6 +21,8 @@ export default function ProfilePage() {
 
     try {
       await uploadAvatar(file);
+
+      window.location.reload();
     } catch (error) {
       toastError(error);
     }

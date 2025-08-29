@@ -19,7 +19,7 @@ import Link from "next/link";
 import { RegisterData } from "@/services/authService";
 
 export function RegisterForm() {
-  const { register, loading } = useAuth();
+  const { register } = useAuth();
 
   const formSchema = z.object({
     fullName: z.string().min(2, "Full name is required."),
@@ -77,7 +77,7 @@ export function RegisterForm() {
             <FormItem>
               <FormLabel>Birthday</FormLabel>
               <FormControl>
-                <Input type="date"  placeholder="Birhday" {...field} />
+                <Input type="date" placeholder="Birhday" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -111,9 +111,7 @@ export function RegisterForm() {
         />
 
         <div className="flex justify-between">
-          <Button type="submit" disabled={loading}>
-            {loading ? "Submitting..." : "Submit"}
-          </Button>
+          <Button type="submit">Submit</Button>
           <Link href={"/login"}>Sign In</Link>
         </div>
       </form>

@@ -35,7 +35,13 @@ export function useAuth() {
   const loadUser = useCallback(async () => {
     setLoading(true);
 
-    const publicRoutes = ["/login", "/register", "/forgot-password"];
+    const publicRoutes = [
+      "/login",
+      "/register",
+      "/forgot-password",
+      "/oauth-callback",
+      "/oauth-success",
+    ];
 
     if (publicRoutes.includes(pathname)) {
       return;
@@ -113,6 +119,7 @@ export function useAuth() {
     try {
       await apiLogout();
 
+      setLoading(false);
       window.location.href = "/";
     } catch (error) {
       console.log(error);
