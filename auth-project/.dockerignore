@@ -1,0 +1,27 @@
+# Node modules & build output
+node_modules
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+*.log
+
+# Output của Next.js
+.next
+out
+dist
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Git
+.git
+.gitignore
+
+# Editor & system files
+.vscode
+.idea
+*.swp
+*.swo
+.DS_Store
+Thumbs.db

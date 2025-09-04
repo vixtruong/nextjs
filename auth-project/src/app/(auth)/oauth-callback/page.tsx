@@ -1,14 +1,20 @@
 import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 
-interface Props {
-  searchParams: { provider?: string };
-}
+type PageProps = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
 
-export default async function OAuthCallbackPage({ searchParams }: Props) {
-  const provider = searchParams.provider;
+export default async function OAuthCallbackPage({ searchParams }: PageProps) {
+  // Next 15: searchParams là Promise, cần await
+  const sp = await searchParams;
 
-  console.log("provider", provider);
+  const provider =
+    typeof sp?.provider === "string"
+      ? sp.provider
+      : Array.isArray(sp?.provider)
+      ? sp.provider[0]
+      : undefined;
 
   const session = await auth();
 
@@ -16,11 +22,16 @@ export default async function OAuthCallbackPage({ searchParams }: Props) {
     redirect("/login");
   }
 
+  // An toàn hơn khi truy cập session.user
+  const email = session.user?.email ?? "";
+  const fullName = session.user?.name ?? "";
+  const avatarUrl = session.user?.image ?? "";
+
   const query = new URLSearchParams({
-    email: session.user!.email!,
-    fullName: session.user!.name!,
-    avatarUrl: session.user?.image || "",
-    provider: provider!,
+    email,
+    fullName,
+    avatarUrl,
+    provider: provider ?? "",
   });
 
   redirect(`/oauth-success?${query.toString()}`);

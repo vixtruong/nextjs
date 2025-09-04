@@ -120,7 +120,6 @@ export function useAuth() {
       await apiLogout();
 
       setLoading(false);
-      window.location.href = "/";
     } catch (error) {
       console.log(error);
       toastError(error);
