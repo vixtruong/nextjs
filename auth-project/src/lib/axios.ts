@@ -1,7 +1,7 @@
 import { refreshToken } from "@/services/authService";
 import axios from "axios";
 
-const publicAPIs = ["/api/auth/login", "/api/auth/oauth", "/api/auth/register"];
+const publicAPIs = ["api/auth/login", "api/auth/oauth", "api/auth/register"];
 
 const API_BASE_URl = process.env.NEXT_PUBLIC_API_BASE_URL;
 

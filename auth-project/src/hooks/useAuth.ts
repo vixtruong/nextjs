@@ -121,7 +121,6 @@ export function useAuth() {
 
       setLoading(false);
     } catch (error) {
-      console.log(error);
       toastError(error);
     } finally {
       setLoading(false);

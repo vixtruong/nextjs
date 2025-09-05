@@ -6,7 +6,6 @@ type PageProps = {
 };
 
 export default async function OAuthCallbackPage({ searchParams }: PageProps) {
-  // Next 15: searchParams là Promise, cần await
   const sp = await searchParams;
 
   const provider =
@@ -22,7 +21,6 @@ export default async function OAuthCallbackPage({ searchParams }: PageProps) {
     redirect("/login");
   }
 
-  // An toàn hơn khi truy cập session.user
   const email = session.user?.email ?? "";
   const fullName = session.user?.name ?? "";
   const avatarUrl = session.user?.image ?? "";
